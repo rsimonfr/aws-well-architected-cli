@@ -1,12 +1,10 @@
 # well-architected-review
 
 This repo intends to publish some scripts related to Well Architected Reviews.
-
 war.py extracts in txt & xlsx files all the WAR that exists in the account and the specified region.
-It works when launched from AWS CloudShell &  on desktop with an AWS Cli already installed
+It works when launched from AWS CloudShell &  with an AWS Cli
 
 The script requires you use a profile which has access to Well Architected Tool Reviews at least in reading
-
 If you are using --s3bucket option it will require write access to target bucket
 
 Before launching the script, insure you have very latest version of AWS Boto3 SDK & Python 3  & xlsxwriter:
@@ -25,7 +23,8 @@ Available options:
 
   --pillar to extract only one pillar
     valid values are :  'security', 'reliability', 'costOptimization', 'operationalExcellence', 'performance'  
-    
+    Note the pillar option will not work with custom lense if the pillars are different from AWS ones.
+
   --prefix to extract WAR with  a specific description prefix
 
   --milestone to extract specific milestone id for a WAR

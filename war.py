@@ -74,14 +74,10 @@ if args.prefix == None:
     prefix=''
 else:
     prefix=args.prefix
-if args.pillar == None:
-    pillars = [ 'security', 'reliability', 'costOptimization', 'operationalExcellence', 'performance' ]
-else:
+if args.pillar != None:
     if args.pillar not in [ 'security', 'reliability', 'costOptimization', 'operationalExcellence', 'performance' ]:
         print("Pillar " + args.pillar + " is not valid" )
         exit(1)
-    else:
-        pillars = [ args.pillar ]
 
 listworkloads = client.list_workloads(
         WorkloadNamePrefix=prefix
@@ -156,7 +152,28 @@ for id in range(len(listworkloads["WorkloadSummaries"])):
  worksheetsummary.write(k, 4, 'Updated at ' + str(listworkloads["WorkloadSummaries"][id]["UpdatedAt"]))
  # iteration on lenses
  for lensid in range(len(lenses['LensReviewSummaries'])):
-   lens=lenses['LensReviewSummaries'][lensid]['LensAlias']
+   if 'LensArn' in lenses['LensReviewSummaries'][lensid].keys():
+       lens=lenses['LensReviewSummaries'][lensid]['LensArn']
+   else:
+       lens=lenses['LensReviewSummaries'][lensid]['LensAlias']
+   if args.milestone == None:
+     lense_review=client.get_lens_review(
+        WorkloadId=workloadid,
+        LensAlias=lens
+     )
+   else:
+     lense_review=client.get_lens_review(
+        WorkloadId=workloadid,
+        LensAlias=lens,
+        MilestoneNumber=args.milestone
+     )
+   list_pillars=lense_review['LensReview']['PillarReviewSummaries']
+   if args.pillar == None:
+       pillars=[]
+       for i in range(len(list_pillars)):
+           pillars.append(list_pillars[i]['PillarId'])
+   else:
+       pillars=[args.pillar]
    for pillar in pillars:
     if args.milestone == None:
      answers=client.list_answers(
@@ -247,7 +264,7 @@ workbook.close()
 
 print ("Generated WAR csv file in " + output)
 print ("Generated WAR xlsx file in " + outputxls)
-# copy to S3 bucket if option selected 
+# copy to S3 bucket if option selected
 if bucket != None:
     if key is None:
         key = os.path.basename(output)
