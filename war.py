@@ -75,7 +75,7 @@ if args.prefix == None:
 else:
     prefix=args.prefix
 if args.pillar != None:
-    if args.pillar not in [ 'security', 'reliability', 'costOptimization', 'operationalExcellence', 'performance' ]:
+    if args.pillar not in [ 'security', 'reliability', 'costOptimization', 'operationalExcellence', 'performance', 'sustainability' ]:
         print("Pillar " + args.pillar + " is not valid" )
         exit(1)
 
